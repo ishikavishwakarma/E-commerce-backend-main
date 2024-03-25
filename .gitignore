@@ -1,0 +1,20 @@
+# Ignore Node.js modules
+node_modules/
+
+# Ignore environment variables file
+.env
+
+# Ignore logs
+logs/
+
+# Ignore database files (if applicable)
+*.db
+
+# Ignore compiled binaries
+bin/
+
+# Ignore IDE or editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
