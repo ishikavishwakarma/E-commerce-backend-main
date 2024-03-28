@@ -73,15 +73,43 @@ exports.removeAddress = catchAsyncError(async (req, res) => {
 
 exports.uploadImage = catchAsyncError(async (req, res) => {
     const { _id: id } = req.user;
-    const file = req.file.path;
+    const user = await User.findById(id);
+    console.log(req.files.image)
+    console.log(user)
     try {
-        const user = await User.findByIdAndUpdate(id, { image: file },{ new: true });
-        if (!user) {
-            throw new ErrorHandler("User not found", 404);
-        }
-        await user.save();
-        res.status(200).json(user);
+        
+            // Check if req.files and req.files.resuma are defined
+            if (req.files && req.files.image) {
+                const file = req.files.image;
+        
+                if (user.image.fileId !== '') {
+                    await cloudinary.uploader.destroy(user.image.fileId, (error, result) => {
+                        if (error) {
+                            console.error('Error deleting file from Cloudinary:', error);
+                        } else {
+                            console.log('File deleted successfully:', result);
+                        }
+                    });
+                }
+                const filepath = req.files.image;
+                const myavatar = await cloudinary.uploader.upload(filepath.tempFilePath);
+        
+                user.image = {
+                    fileId: myavatar.public_id,
+                    url: myavatar.secure_url
+                };
+        
+                await user.save();
+                return res
+                    .status(200)
+                    .json({ success: true, message: 'Profile Picture Updated Successfully!', user: user });
+            } else {
+                // Handle the case where req.files or req.files.resuma is undefined
+                return ( new ErrorHandler("  Find No Avatar"))
+            }
     } catch (err) {
         res.status(err.statusCode || 500).json({ msg: err.message || "Internal Server Error" });
+        
     }
+   
 });

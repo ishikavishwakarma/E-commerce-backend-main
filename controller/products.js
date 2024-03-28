@@ -147,29 +147,29 @@ exports.readAllProducts = async (req, res, next) => {
         
         const { categories, colors, price } = req.body; // Extract filter parameters from the request body
         const filters = {};
-      
-        if (categories) {
-          filters.category = { $in: categories }; // Match products with specified categories
+      console.log(req.body)
+      if (categories && categories.length > 0) {
+        filters.category = { $in: categories };
+    }
+        if (colors && colors.length > 0) {
+            filters.color = { $in: colors };
         }
-      
-        if (colors) {
-          filters.color = { $in: colors }; // Match products with specified colors
-        }
-      
-        if (price) {
-          // Parse price range from request body
-          const [minPrice, maxPrice] = price.split('-');
-          
-          // Match products with price within the specified range
-          filters.price = { $gte: minPrice, $lte: maxPrice };
-        }
+       if (price && Array.isArray(price) && price.length > 0) {
+    // Assuming price is an array of numbers like [500, 1000]
+    const [minPrice, maxPrice] = price;
+    filters.price = { $gte: minPrice, $lte: maxPrice };
+} else {
+    console.error('Price is not in the expected format:', price);
+}
+        console.log(filters)
       
         // Use filters in the query to retrieve matching products
-        const products = await Product.find(filters).sort({ price: 1 }).exec(); // Sort products by price in ascending order
+        const products = await Product.find(filters).sort({ price: 1 }).exec();
+        // console.log(products) // Sort products by price in ascending order
       
         res.status(200).json(products);
     } catch (error) {
-        console.error(err);
+        console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
   };

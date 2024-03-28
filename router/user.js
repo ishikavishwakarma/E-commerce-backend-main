@@ -21,7 +21,7 @@ router.get('/:id', authenticateToken, getUserById)
     .post("/ProfileUpdate", authenticateToken, updateProfile)
     .patch('/', authenticateToken, updateUserAddress)
     .patch('/removeAddress', authenticateToken, removeAddress)
-    .post("/avatar", authenticateToken, upload.single("avatar"), uploadImage)
+    .post("/avatar", authenticateToken, uploadImage)
 
 
 module.exports = router
