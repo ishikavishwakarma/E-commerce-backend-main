@@ -17,7 +17,7 @@ app.use(
     })
   );
 
-app.use(require("cors")({credentials:true,origin:"*"}))
+app.use(require("cors")({credentials:true,origin:["https://e-commerce-satanam-frontend.vercel.app/"]}))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
